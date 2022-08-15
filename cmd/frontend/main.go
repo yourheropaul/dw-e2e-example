@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/dailywire/monorepo/v2/cms"
 	"github.com/dailywire/monorepo/v2/frontend"
 	"github.com/dailywire/monorepo/v2/http"
 )
@@ -19,7 +18,10 @@ func main() {
 	_, shutdown := requireHTTPServer(
 		"frontend",
 		":5000",
-		frontend.NewServer(siteGen, &mockContentFetcher{}), // TODO: CMS server
+		frontend.NewServer(
+			siteGen,
+			frontend.NewHTTPContentFetcher("http://localhost:5001"), // Obviously this shouldn't be hardcoded!
+		),
 	)
 	defer shutdown()
 
@@ -54,48 +56,4 @@ func assert(desc string, err error) {
 		log.Print(fmt.Sprintf("%s: %s", desc, err))
 		os.Exit(1)
 	}
-}
-
-type mockContentFetcher struct{}
-
-func (m mockContentFetcher) FetchContent() (cms.Content, error) {
-	return cms.Content{
-		FrontpageArticles: []cms.Article{
-			{
-				Headline: "This is a headline",
-				ByLine:   "Some Author",
-				ImageURL: "https://i.picsum.photos/id/1062/1920/1080.jpg?hmac=BwtGVMQ3zWdOyaoIN3-8Cm41N1f-Ey9OmMcicGmwyVA",
-				TopStory: true,
-			},
-			{
-				Headline: "This is another headline",
-				ByLine:   "Some Author",
-				ImageURL: "https://i.picsum.photos/id/1062/1920/1080.jpg?hmac=BwtGVMQ3zWdOyaoIN3-8Cm41N1f-Ey9OmMcicGmwyVA",
-				Featured: true,
-			},
-			{
-				Headline: "3This is a headline",
-				ByLine:   "4Some Author",
-				ImageURL: "https://i.picsum.photos/id/1062/1920/1080.jpg?hmac=BwtGVMQ3zWdOyaoIN3-8Cm41N1f-Ey9OmMcicGmwyVA",
-				Featured: true,
-			},
-			{
-				Headline: "This is a headline",
-				ByLine:   "Some Author",
-				ImageURL: "https://i.picsum.photos/id/1062/1920/1080.jpg?hmac=BwtGVMQ3zWdOyaoIN3-8Cm41N1f-Ey9OmMcicGmwyVA",
-				Featured: true,
-			},
-			{
-				Headline: "--This is a headline",
-				ByLine:   "Some Author",
-				ImageURL: "https://i.picsum.photos/id/1062/1920/1080.jpg?hmac=BwtGVMQ3zWdOyaoIN3-8Cm41N1f-Ey9OmMcicGmwyVA",
-			},
-			{
-				Headline: "@@This is a headline",
-				ByLine:   "Some Author",
-				ImageURL: "https://i.picsum.photos/id/1062/1920/1080.jpg?hmac=BwtGVMQ3zWdOyaoIN3-8Cm41N1f-Ey9OmMcicGmwyVA",
-				Featured: true,
-			},
-		},
-	}, nil
 }
