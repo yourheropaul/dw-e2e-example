@@ -12,5 +12,5 @@ type Article struct {
 }
 
 type Content struct {
-	Articles []Article
+	FrontpageArticles []Article
 }

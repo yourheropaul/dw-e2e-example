@@ -24,6 +24,14 @@ help:
 		| sed -E -n 's/(\.PHONY|# TARGETDOC): (.*) # (.*)/\\033[36m\2\\033[m:  \3\\n/'p | column -c2 -t -s :))
 	@printf ' $(doc_expanded)'
 
-.PHONY: run-frontend # Start the frontend server
+.PHONY: run-servers # Start the frontend and CMS server
+run-servers:
+	$(MAKE) -j 2 run-cms run-frontend
+
+.PHONY: run-frontend # Start the frontend server only
 run-frontend:
 	@go run cmd/frontend/*.go
+
+.PHONY: run-cms # Start the CMS server only
+run-cms:
+	@go run cmd/cms/*.go

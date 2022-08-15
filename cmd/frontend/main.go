@@ -17,7 +17,7 @@ func main() {
 	require("site generator", err)
 
 	_, shutdown := requireHTTPServer(
-		"webserver",
+		"frontend",
 		":5000",
 		frontend.NewServer(siteGen, &mockContentFetcher{}), // TODO: CMS server
 	)
@@ -60,7 +60,7 @@ type mockContentFetcher struct{}
 
 func (m mockContentFetcher) FetchContent() (cms.Content, error) {
 	return cms.Content{
-		Articles: []cms.Article{
+		FrontpageArticles: []cms.Article{
 			{
 				Headline: "This is a headline",
 				ByLine:   "Some Author",

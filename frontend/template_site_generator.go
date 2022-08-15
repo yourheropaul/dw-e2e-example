@@ -34,7 +34,7 @@ type TemplateArgs struct {
 }
 
 func templateArgsFromContent(input cms.Content) (output TemplateArgs) {
-	output.TopStory = input.Articles[0]
-	output.FeaturedStories = input.Articles[1:][:4]
+	output.TopStory = input.FrontpageArticles[0]
+	output.FeaturedStories = input.FrontpageArticles[1:][:4]
 	return
 }
