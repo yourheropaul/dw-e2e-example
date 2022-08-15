@@ -3,29 +3,30 @@ package frontend
 import (
 	"html/template"
 	"io"
+	"io/fs"
 
 	"github.com/dailywire/monorepo/v2/cms"
 )
 
 type TemplateSiteGenerator struct {
-	templatePath string
+	filesystem fs.FS
 }
 
-func NewTemplateSiteGenerator(templatePath string) (*TemplateSiteGenerator, error) {
+func NewTemplateSiteGenerator(filesystem fs.FS) (*TemplateSiteGenerator, error) {
 	return &TemplateSiteGenerator{
-		templatePath: templatePath,
+		filesystem: filesystem,
 	}, nil
 }
 
 func (t *TemplateSiteGenerator) Render(dest io.Writer, content cms.Content) error {
-	tmpl, err := template.ParseFiles(t.templatePath)
+	tmpl, err := template.ParseFS(t.filesystem, "templates/*")
 	if err != nil {
 		return err
 	}
 
 	args := templateArgsFromContent(content)
 
-	return tmpl.Execute(dest, args)
+	return tmpl.ExecuteTemplate(dest, "index.html", args)
 }
 
 type TemplateArgs struct {
