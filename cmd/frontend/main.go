@@ -12,8 +12,7 @@ import (
 )
 
 func main() {
-	siteGen, err := frontend.NewTemplateSiteGenerator(frontend.TemplatesFS)
-	require("site generator", err)
+	siteGen := frontend.NewTemplateSiteGenerator(frontend.TemplatesFS)
 
 	_, shutdown := requireHTTPServer(
 		"frontend",

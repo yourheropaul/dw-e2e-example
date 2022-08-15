@@ -49,8 +49,7 @@ var mockContent = cms.Content{
 }
 
 func Test_ATemplateSiteGeneratoCanRenderTheHomePage(t *testing.T) {
-	generator, err := NewTemplateSiteGenerator(TemplatesFS)
-	require.Nil(t, err)
+	generator := NewTemplateSiteGenerator(TemplatesFS)
 
 	buf := bytes.Buffer{}
 	generator.Render(&buf, mockContent)

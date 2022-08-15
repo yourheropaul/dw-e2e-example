@@ -22,7 +22,10 @@ type World struct {
 	stepIndex          int
 	logger             *Log
 	scenarioResetFuncs []shutdownFunc
-	browser            *Browser
+	browser            *browser
+	database           *database
+	cmsServer          *cmsServer
+	frontendServer     *frontendServer
 }
 
 func NewWorld() *World {

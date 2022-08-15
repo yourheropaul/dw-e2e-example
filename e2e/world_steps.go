@@ -6,9 +6,12 @@ type stepper interface {
 
 func (w *World) RegisterSteps(sc stepper) {
 	// Given
-	//	sc.Step(`^there\'s a network$`, w.theresANetwork)
+	sc.Step(`^there a several articles already posted$`, w.thereASeveralArticlesAlreadyPosted)
+	sc.Step(`^an article has been promoted to the Top Story$`, w.anArticleHasBeenPromotedToTheTopStory)
 
 	// When
+	sc.Step(`^I visit the home page$`, w.iVisitTheHomePage)
 
 	// Then
+	sc.Step(`^I should see the Top Story article preview displayed prominently$`, w.iShouldSeeTheTopStoryArticlePreviewDisplayedProminently)
 }

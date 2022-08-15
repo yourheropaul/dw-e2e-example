@@ -1,19 +1,13 @@
 package e2e
 
-import (
-	"github.com/pkg/errors"
-)
-
-func (w *World) iViewTheBlockExplorerForMyAccount() error {
+func (w *World) iVisitTheHomePage() error {
 	if err := w.requireSetup(
+		w.setupCMSServer,
+		w.setupFrontendServer,
 		w.setupBrowser,
 	); err != nil {
 		return err
 	}
 
-	if err := w.browser.Visit("/"); err != nil {
-		return errors.Wrap(err, "browser.Visit")
-	}
-
-	return nil
+	return w.browser.Visit(w.frontendServer.httpServer.URL)
 }

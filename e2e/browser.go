@@ -5,44 +5,54 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 )
 
-type Browser struct {
+type browser struct {
 	ctx    context.Context
 	cancel func()
 	logger *ServiceLogger
 }
 
-func NewBrowser(logger *ServiceLogger) *Browser {
+func NewBrowser(logger *ServiceLogger) *browser {
 	ctx, cancel := chromedp.NewContext(context.Background())
 
 	handleChromeDpLogs(ctx, logger)
 
-	return &Browser{
+	return &browser{
 		ctx:    ctx,
 		cancel: cancel,
 		logger: logger,
 	}
 }
 
-func (b *Browser) Close() {
+func (b *browser) Close() {
 	b.cancel()
 }
 
-func (b *Browser) Visit(url string) error {
+func (b *browser) Visit(url string) error {
 	return chromedp.Run(b.ctx, chromedp.Navigate(url))
 }
 
-func (b *Browser) Text(selector string) (string, error) {
+func (b *browser) Text(selector string) (string, error) {
 	var res string
-	err := chromedp.Run(b.ctx, chromedp.Text(selector, &res, chromedp.NodeVisible))
+	err := chromedp.Run(
+		b.ctx,
+		runWithTimeOut(
+			&b.ctx,
+			1*time.Second,
+			chromedp.Tasks{
+				chromedp.Text(selector, &res, chromedp.NodeVisible),
+			},
+		),
+	)
 	return res, err
 }
 
-func (b *Browser) FullScreenshot() ([]byte, error) {
+func (b *browser) FullScreenshot() ([]byte, error) {
 	var buf []byte
 
 	if err := chromedp.Run(b.ctx, chromedp.FullScreenshot(&buf, 100)); err != nil {
@@ -50,6 +60,14 @@ func (b *Browser) FullScreenshot() ([]byte, error) {
 	}
 
 	return buf, nil
+}
+
+func runWithTimeOut(ctx *context.Context, timeout time.Duration, tasks chromedp.Tasks) chromedp.ActionFunc {
+	return func(ctx context.Context) error {
+		timeoutContext, cancel := context.WithTimeout(ctx, timeout)
+		defer cancel()
+		return tasks.Do(timeoutContext)
+	}
 }
 
 func handleChromeDpLogs(ctx context.Context, logger io.Writer) {

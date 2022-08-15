@@ -12,10 +12,10 @@ type TemplateSiteGenerator struct {
 	filesystem fs.FS
 }
 
-func NewTemplateSiteGenerator(filesystem fs.FS) (*TemplateSiteGenerator, error) {
+func NewTemplateSiteGenerator(filesystem fs.FS) *TemplateSiteGenerator {
 	return &TemplateSiteGenerator{
 		filesystem: filesystem,
-	}, nil
+	}
 }
 
 func (t *TemplateSiteGenerator) Render(dest io.Writer, content cms.Content) error {
@@ -35,7 +35,12 @@ type TemplateArgs struct {
 }
 
 func templateArgsFromContent(input cms.Content) (output TemplateArgs) {
-	output.TopStory = input.FrontpageArticles[0]
+	for _, article := range input.FrontpageArticles {
+		if article.TopStory {
+			output.TopStory = article
+		}
+	}
+
 	output.FeaturedStories = input.FrontpageArticles[1:][:4]
 	return
 }
