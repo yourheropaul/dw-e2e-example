@@ -2,6 +2,8 @@
 
 A forward-looking example of how we might specify and automatically end-to-end test our software applications in the future.
 
+See also the [Confluence Testing space](https://bentkey.atlassian.net/wiki/spaces/TEST/overview), which contains definitions of terms and some basic theory.
+
 ## What is this?
 
 An **example monorepo**, containing a very basic frontend application and a minimal framework for a Content Management System that drives the content, complete with an **end-to-end test runner** and a single user story.
